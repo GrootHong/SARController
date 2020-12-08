@@ -1,0 +1,124 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    PCI8502.INF
+;
+;Abstract:
+;    INF file for a generic PCI device.
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=08/05/2016,
+CatalogFile=PCI8502.cat
+CatalogFile.NTx86=PCI8502X86.cat
+CatalogFile.NTAMD64=PCI8502X64.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+PCI8502.Files.Driver=10,System32\Drivers
+PCI8502.Files.Dll=10,System32
+PCI8502.Files.Inf=10,inf
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg     
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+HKR,,DeviceCharacteristics,0x10001,0x100     ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system and built-in Admin. 
+
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=PCI\VID_2007&PID_8502&SUBSYS_00000000&REV_01
+
+
+[Manufacturer]
+%MSFT%=MSFT,NTx86, NTia64, NTamd64
+
+; For Win2K
+[MSFT]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%PCI8502.DRVDESC%=PCI8502_Inst, PCI\VEN_2007&DEV_8502&SUBSYS_00000000&REV_01
+
+; For XP and later
+[MSFT.NTx86]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%PCI8502.DRVDESC%=PCI8502_Inst, PCI\VEN_2007&DEV_8502&SUBSYS_00000000&REV_01
+[MSFT.NTia64]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%PCI8502.DRVDESC%=PCI8502_Inst, PCI\VEN_2007&DEV_8502&SUBSYS_00000000&REV_01
+
+[MSFT.NTamd64]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%PCI8502.DRVDESC%=PCI8502_Inst, PCI\VEN_2007&DEV_8502&SUBSYS_00000000&REV_01
+
+
+[PCI8502_Inst.NT]
+CopyFiles=PCI8502.Files.Driver,PCI8502.Files.Dll
+AddReg=PCI8502.AddReg
+
+[PCI8502.Files.Driver]
+PCI8502.sys
+
+[PCI8502.Files.Dll]
+PCI8502_32.dll
+PCI8502_64.dll
+
+[SourceDisksFiles]
+PCI8502.sys=1,,
+PCI8502_32.dll=1,,
+PCI8502_64.dll=1,,
+PCI8502.inf=1,,
+
+[SourceDisksFiles.NTamd64]
+PCI8502.sys=1,,
+
+[SourceDisksNames.x86]
+1 = %DISK_NAME%,,,\i386
+
+[SourceDisksNames.ia64]
+1 = %DISK_NAME%,,,\ia64
+
+[SourceDisksNames.amd64]
+1 = %DISK_NAME%,,,\amd64
+
+
+[PCI8502_Inst.NT.Services]
+AddService=PCI8502,0x00000002,PCI8502_Service 
+
+[PCI8502_Service]
+DisplayName    = %PCI8502.SVCDESC%                            
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\PCI8502.sys                            
+
+[Strings]
+MSFT = "ART"
+ClassName = "Art Device"
+PCI8502.SVCDESC = "Art PCI8502 12Bit 4CH 40MHz AD Card "
+PCI8502.DRVDESC = "Art PCI8502 12Bit 4CH 40MHz AD Card"
+DISK_NAME = "ART PCI8502"
+
